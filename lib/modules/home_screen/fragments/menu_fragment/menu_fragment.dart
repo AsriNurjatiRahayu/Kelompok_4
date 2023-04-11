@@ -7,7 +7,7 @@ class MenuFragment extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Text("Menu Fragment"),
+        child: Text("Menu Fragments"),
       ),
     );
   }
