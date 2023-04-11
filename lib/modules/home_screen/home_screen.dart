@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:kelompok4/configs/app_routes.dart';
 import 'package:kelompok4/models/user.dart';
+import 'package:kelompok4/models/news.dart';
 
-import 'home_screen_widget.dart';
+/* data dummy */
+import 'package:kelompok4/models/news_dummy.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
     super.key,
-    required this.user,
+    // required this.user,
   });
-  final User user;
+  // final User user;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -17,91 +21,49 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   late Size size;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final PageController _pageController = PageController();
+  late User user;
+
+  // todo: define hotesNews && List<News> latesNews
+  late News hotesNews = hotesNewsDummy;
+  late List<News> latesNews = latesNewsDummy;
 
   tapBottomItem(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    if (index != 2) {
+      setState(() {
+        _currentIndex = index;
+      });
+      _pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
+    } else {
+      scaffoldKey.currentState!.openEndDrawer();
+    }
+  }
+
+  getUserDetail() {
+    user = User.dummy();
+  }
+
+  @override
+  void initState() {
+    getUserDetail();
+    _pageController.addListener(() {});
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).padding.top,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
-            child: HeaderWidget(
-              user: widget.user,
-            ),
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
-            child: SearchFieldWidget(),
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
-                  child: SectionTitle(
-                    label: "Hotest News",
-                  ),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
-                  child: HotestNewsCard(
-                    size: size,
-                    newsTitle: "Lebaran Sebentar Lagi",
-                    pictureUrl: "https://picsum.photos/1080/690",
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: SectionTitle(
-                    label: "Latest News",
-                  ),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
-                  child: LatestNewsIndexCardSection(
-                    size: size,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+      key: scaffoldKey,
+      endDrawer: endDrawer(),
+      body: PageView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _pageController,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -118,6 +80,144 @@ class _HomeScreenState extends State<HomeScreen> {
           bottomMenuItem(
             "Menu",
             Icons.menu_rounded,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Drawer endDrawer() {
+    return Drawer(
+      child: Column(
+        children: [
+          Container(
+            color: Colors.blue,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).padding.top,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: AspectRatio(
+                    aspectRatio: 1 / 1,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(500),
+                      child: Image.network(
+                        user.profilePhoto!,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Text.rich(
+                  TextSpan(
+                    text: "${user.name} ",
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: "(${user.username})",
+                        style: const TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Text(
+                  user.email,
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GestureDetector(
+              onTap: () {
+                GoRouter.of(context).goNamed(
+                  AppRoutes.profileDetail,
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.blue[100],
+                ),
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Row(
+                        children: const [
+                          Icon(
+                            Icons.edit_rounded,
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          Flexible(
+                            child: Text(
+                              "Edit Profile",
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const Expanded(
+            child: SizedBox(),
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.blue,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(
+                  Icons.logout_rounded,
+                  color: Colors.white,
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  "Logout",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 16,
           ),
         ],
       ),
