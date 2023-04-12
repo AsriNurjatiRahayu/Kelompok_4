@@ -4,8 +4,8 @@ import 'package:kelompok4/configs/app_routes.dart';
 import 'package:kelompok4/models/user.dart';
 import 'package:kelompok4/models/news.dart';
 
-/* data dummy */
-import 'package:kelompok4/models/news_dummy.dart';
+/* news late data */
+import 'package:kelompok4/models/news_late.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -26,8 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late User user;
 
   // todo: define hotesNews && List<News> latesNews
-  late News hotesNews = hotesNewsDummy;
-  late List<News> latesNews = latesNewsDummy;
+  late News hotesNews = hotesNews;
+  late List<News> latesNews = latesNews;
 
   tapBottomItem(int index) {
     if (index != 2) {

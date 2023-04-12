@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:kelompok4/configs/app_routes.dart';
 import 'package:kelompok4/models/user.dart';
-import 'package:kelompok4/models/news.dart';
 import 'package:kelompok4/modules/home_screen/fragments/home_fragment/home_fragment_widgets.dart';
 
+import '../../../../models/news.dart';
+
+// masukan home fragment widget
 
 class HomeFragment extends StatefulWidget {
   const HomeFragment({
     super.key,
     required this.user,
-    required this.hotesNews, // todo: add constructor hotesNews
-    required this.latesNews,  // todo: add constructor latesNews
+    required this.hotesNews, 
+    required this.latesNews,  
     required this.homeScaffold,
   });
 
   final User user;
-
-  // todo: define hotesNews && latesNews
-  final News hotesNews; // todo
-  final List<News> latesNews; // todo
+  final News hotesNews; 
+  final List<News> latesNews; 
   final GlobalKey<ScaffoldState> homeScaffold;
 
   @override
@@ -79,9 +81,9 @@ class _HomeFragmentState extends State<HomeFragment> {
                     ),
                     child: HomeFragmentWidget.hotestNewsCard(
                       size,
-                      // todo: add hotesNews && List<News> latesNews
-                      widget.hotesNews.imageUrl, // "https://picsum.photos/1080/690",
-                      widget.hotesNews.title, // "Lebaran Sebentar Lagi",
+                      // masukan berita terbaru dan url gambarnya
+                      widget.hotesNews.imageUrl,
+                      widget.hotesNews.title,
                     ),
                   ),
                   const SizedBox(
@@ -103,7 +105,7 @@ class _HomeFragmentState extends State<HomeFragment> {
                     child: HomeFragmentWidget.latestNewsSection(
                       size,
                       widget.latesNews
-                      /* new: add list lates-news */
+                      
                     ),
                   ),
                 ],
